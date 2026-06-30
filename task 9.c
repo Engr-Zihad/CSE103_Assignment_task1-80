@@ -9,7 +9,7 @@ int main()
     if (num < 0)
         num = -num;
     if (num == 0)
-        count = 1;
+        count = 1;                                                            // Count the Number of Digits in an Integer
     else
     {
         while (num > 0)
