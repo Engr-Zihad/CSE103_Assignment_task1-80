@@ -8,7 +8,7 @@ int main ()
     {
         printf("%d is a positive number.",a);
     }
-    else if (a<0)
+    else if (a<0)                                                                        // Positive, Negative, or Zero Number
     {
         printf("%d is a negative number.",a);
     }
