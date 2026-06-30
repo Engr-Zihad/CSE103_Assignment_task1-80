@@ -5,7 +5,7 @@ int main() {
     printf("Enter a number: ");
     scanf("%d", &n);
     original = n;
-    while (n > 0) {
+    while (n > 0) {                                                                                   // Reverse the Digits of an Integer
         rev = rev * 10 + n % 10;
         n = n / 10;
     }
