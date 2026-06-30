@@ -5,7 +5,7 @@ int main()
     int n,sum=0;
     printf("Enter the value of n: ");
     scanf("%d", &n);
-    for(int i=1; i<=n; i++)
+    for(int i=1; i<=n; i++)                                                                    // Find the Sum of First n Natural Numbers
     {
         sum = sum + i;
     }
