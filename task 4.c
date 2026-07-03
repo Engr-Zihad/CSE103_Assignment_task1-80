@@ -1,3 +1,4 @@
+// Find the Greater Number Between Two Integers
 #include <stdio.h>
 int main ()
 {
@@ -5,7 +6,7 @@ int main ()
     printf("Enter two numbers: ");
     scanf("%d%d", &a, &b);
     if (a > b)
-        printf("%d is greater than %d.", a, b);                                          // Find the Greater Number Between Two Integers
+        printf("%d is greater than %d.", a, b);                                          
         else if (a == b)
         printf("Both numbers are equal.");
     else
