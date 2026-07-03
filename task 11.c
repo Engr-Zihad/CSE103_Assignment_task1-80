@@ -1,3 +1,4 @@
+// Check Whether a Number is Palindrome
 #include <stdio.h>
 int main() {
     int n, original, rev = 0, remainder;
