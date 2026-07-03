@@ -1,5 +1,5 @@
+// Count the Number of Digits in an Integer
 #include <stdio.h>
-
 int main()
 {
     int num, original, count = 0;
@@ -9,7 +9,7 @@ int main()
     if (num < 0)
         num = -num;
     if (num == 0)
-        count = 1;                                                            // Count the Number of Digits in an Integer
+        count = 1;                                                            
     else
     {
         while (num > 0)
