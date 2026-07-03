@@ -1,3 +1,4 @@
+// Find the Smallest Number Among Three Integers
 #include <stdio.h>
 int main ()
 {
@@ -6,7 +7,7 @@ int main ()
     scanf("%d%d%d", &a, &b, &c);
     if (a< b && a< c)
         printf("%d is the smallest number.", a);
-    else if (b< c && b< a)                                                                               // Find the Smallest Number Among Three Integers
+    else if (b< c && b< a)                                                                              
         printf("%d is the smallest number.", b);
     else if (c< a && c< b)
         printf("%d is the smallest number.", c);
