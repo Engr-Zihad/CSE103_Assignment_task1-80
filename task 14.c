@@ -1,3 +1,4 @@
+// Count the Number of Divisors of a Number
 #include <stdio.h>
 int main() {
     int n, i, count = 0;
