@@ -1,12 +1,12 @@
+// Find the Factorial of a Number
 #include <stdio.h>
-
 int main()
 {
     int n, i;
     printf("Enter a number: ");
     scanf("%d", &n);
      int factorial = 1;
-        for(i = 1; i<= n; i++)                                                                            // Find the Factorial of a Number
+        for(i = 1; i<= n; i++)                                                                            
         {
             factorial = factorial * i;
         }
