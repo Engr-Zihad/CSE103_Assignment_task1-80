@@ -1,3 +1,4 @@
+// Check Divisibility by 5
 #include <stdio.h>
 int main ()
 {
@@ -6,7 +7,7 @@ int main ()
     scanf("%d",&a);
     if (a%5==0)
     {
-        printf("%d is divisible by 5.",a);                                                        // Check Divisibility by 5
+        printf("%d is divisible by 5.",a);                                                    
     }
     else
     {
