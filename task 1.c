@@ -1,3 +1,4 @@
+// Even or Odd Number
 #include <stdio.h>
 int main (){
 int n;
@@ -5,7 +6,7 @@ printf("Enter a number :");
 scanf("%d",&n);
 if (n%2==0)
 {
-    printf("%d is an even number.",n);                               // Even or Odd Number
+    printf("%d is an even number.",n);                             
 }
 else
 {
