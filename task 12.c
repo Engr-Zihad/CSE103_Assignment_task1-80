@@ -1,3 +1,4 @@
+// Check Whether a Number is a Multiple of Another Number
 #include <stdio.h>
 int main() {
     int a, b;
