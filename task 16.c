@@ -1,3 +1,4 @@
+// Find the Greatest Common Divisor of Two Numbers
 #include <stdio.h>
 int main() {
     int a, b, original_a, original_b, remainder;
