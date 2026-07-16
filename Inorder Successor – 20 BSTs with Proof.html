@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Inorder Successor – 20 BSTs with Proof</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: #fff;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            padding: 24px 28px 32px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b1a2e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+        h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #4a6a8b;
+            background: #eef3f8;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+
+        /* DEFINITION & RULES */
+        .def-box {
+            background: #eaf3ff;
+            border-radius: 16px;
+            padding: 16px 22px;
+            border-left: 6px solid #2b7be4;
+            margin-bottom: 20px;
+        }
+        .def-box h3 {
+            font-size: 1.1rem;
+            color: #0b1a2e;
+            margin-bottom: 6px;
+        }
+        .def-box p {
+            color: #1e3a5f;
+            line-height: 1.6;
+            font-size: 0.98rem;
+        }
+        .def-box .rules {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 40px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #d0ddee;
+        }
+        .def-box .rules strong {
+            color: #0b1a2e;
+        }
+        .def-box .rule-item {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .rule-badge {
+            display: inline-block;
+            background: #2b7be4;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.7rem;
+            padding: 2px 10px;
+            border-radius: 40px;
+            margin-right: 4px;
+        }
+        .rule-badge.orange {
+            background: #f5a623;
+        }
+
+        .subtitle {
+            color: #3a5a7a;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            padding-left: 4px;
+            line-height: 1.6;
+        }
+
+        .example-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 18px;
+            padding: 8px 12px;
+            background: #f8faff;
+            border-radius: 16px;
+            border: 1px solid #e6edf5;
+            align-items: center;
+        }
+        .example-selector .label {
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-right: 8px;
+        }
+        .example-btn {
+            min-width: 40px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid #d0ddee;
+            background: #fff;
+            font-weight: 600;
+            color: #1e3a5f;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.85rem;
+        }
+        .example-btn:hover {
+            background: #e6edf5;
+            border-color: #b0c4db;
+        }
+        .example-btn.active {
+            background: #2b7be4;
+            border-color: #1a5cb0;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(43, 123, 228, 0.3);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 900px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        .tree-box {
+            background: #fafcff;
+            border-radius: 20px;
+            border: 1px solid #e6edf5;
+            padding: 16px;
+            position: relative;
+            min-height: 480px;
+        }
+        .tree-box canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            border-radius: 12px;
+            background: #ffffff;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: #f2f7fd;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #1e3a5f;
+        }
+        .legend .dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .dot-default { background: #eef3f8; border-color: #b8c9dc; }
+        .dot-selected { background: #2b7be4; border-color: #1a5cb0; }
+        .dot-successor { background: #f5a623; border-color: #c47f10; }
+        .dot-path { background: #a8d5a2; border-color: #2d7a2d; }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .info-card {
+            background: #f8faff;
+            border-radius: 18px;
+            padding: 18px 20px 20px;
+            border: 1px solid #e6edf5;
+        }
+        .info-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0b1a2e;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .info-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0b1a2e;
+            line-height: 1.2;
+        }
+        .info-card .value .null-text {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #7a9abb;
+        }
+        .info-card .desc {
+            color: #3a5a7a;
+            font-size: 0.92rem;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        .proof-box {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px 18px;
+            border: 1px solid #e6edf5;
+            margin-top: 4px;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+        .proof-box h4 {
+            font-size: 0.95rem;
+            color: #0b1a2e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .proof-step {
+            padding: 6px 0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            border-bottom: 1px dashed #eef3f8;
+            color: #1e3a5f;
+        }
+        .proof-step:last-child {
+            border-bottom: none;
+        }
+        .proof-step .highlight {
+            font-weight: 700;
+            color: #0b1a2e;
+        }
+        .proof-step .node-tag {
+            display: inline-block;
+            background: #eef3f8;
+            padding: 0 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .proof-step .arrow-symbol {
+            color: #8aacc9;
+            margin: 0 4px;
+        }
+
+        .btn-reset {
+            background: #eef3f8;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #1e3a5f;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover { background: #dce6f0; transform: translateY(-1px); }
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .traversal-section {
+            margin-top: 8px;
+        }
+        .traversal-section h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #0b1a2e;
+            margin-bottom: 10px;
+        }
+        .traversal-scroll {
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+        .traversal-scroll::-webkit-scrollbar { height: 4px; }
+        .traversal-scroll::-webkit-scrollbar-thumb { background: #b8c9dc; border-radius: 4px; }
+        .traversal-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 12px 14px;
+            background: #f8faff;
+            border-radius: 14px;
+            border: 1px solid #e6edf5;
+            min-height: 50px;
+            align-items: center;
+        }
+        .traversal-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1e3a5f;
+            background: #edf2f9;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .traversal-item:hover { background: #dce6f0; }
+        .traversal-item.selected { background: #2b7be4; color: #fff; border-color: #1a5cb0; transform: scale(1.05); }
+        .traversal-item.successor { background: #f5a623; color: #fff; border-color: #c47f10; }
+        .traversal-item.both { background: linear-gradient(135deg, #2b7be4 50%, #f5a623 50%); color: #fff; border-color: #1a5cb0; }
+        .traversal-item.path { background: #a8d5a2; border-color: #2d7a2d; color: #0b1a2e; }
+        .traversal-arrow { color: #8aacc9; font-weight: 300; font-size: 1.1rem; user-select: none; }
+
+        .tooltip {
+            position: fixed;
+            background: #0b1a2e;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            max-width: 260px;
+        }
+        .tooltip.show { opacity: 1; }
+
+        @media (max-width: 600px) {
+            .container { padding: 14px; }
+            h1 { font-size: 1.5rem; }
+            .grid-2col { grid-template-columns: 1fr; }
+            .example-btn { min-width: 34px; height: 32px; font-size: 0.75rem; }
+            .def-box { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>
+        🌳 Inorder Successor
+        <small>20 BSTs · Learn & Prove</small>
+    </h1>
+    <div class="subtitle">
+        Click any node → the app highlights its successor <strong>and</strong> explains step‑by‑step <strong>why</strong>.
+    </div>
+
+    <!-- DEFINITION & RULES -->
+    <div class="def-box">
+        <h3>📖 Definition &amp; Rules</h3>
+        <p>
+            In a <strong>Binary Search Tree (BST)</strong>, the <strong>Inorder Successor</strong> of a given node is the
+            <strong>next node</strong> that would be visited in an <strong>inorder traversal</strong>
+            (<em>Left → Root → Right</em>).
+        </p>
+        <div class="rules">
+            <span class="rule-item">
+                <span class="rule-badge">Rule 1</span>
+                <span>If the node has a <strong>right subtree</strong>, the successor is the <strong>leftmost node</strong> in that right subtree.</span>
+            </span>
+            <span class="rule-item">
+                <span class="rule-badge orange">Rule 2</span>
+                <span>If the node has <strong>no right subtree</strong>, the successor is the <strong>lowest ancestor</strong> for which the node is in its <strong>left subtree</strong> (climb up until you go left).</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Example selector -->
+    <div class="example-selector">
+        <span class="label">Example:</span>
+        <div id="exampleButtons"></div>
+        <span style="margin-left:auto; font-size:0.8rem; color:#7a9abb;">
+            ← click to change tree
+        </span>
+    </div>
+
+    <div class="grid-2col">
+        <div class="tree-box">
+            <canvas id="treeCanvas" width="1100" height="600"></canvas>
+            <div class="legend">
+                <span><span class="dot dot-default"></span> Default</span>
+                <span><span class="dot dot-selected"></span> Selected</span>
+                <span><span class="dot dot-successor"></span> Successor</span>
+                <span><span class="dot dot-path"></span> Proof Path</span>
+                <span style="margin-left:auto; font-size:0.8rem; color:#6a8aaa;">⚡ Click node</span>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="info-card">
+                <h3>🔍 Selected Node</h3>
+                <div class="value" id="selectedDisplay">—</div>
+                <div class="desc" id="selectedDesc">Click a node</div>
+            </div>
+            <div class="info-card">
+                <h3>➡️ Inorder Successor</h3>
+                <div class="value" id="successorDisplay"><span class="null-text">—</span></div>
+                <div class="desc" id="successorDesc">Select a node</div>
+            </div>
+            <div class="proof-box" id="proofBox">
+                <h4>🧠 Step‑by‑Step Proof</h4>
+                <div id="proofContent">
+                    <div class="proof-step">Click a node to see the proof.</div>
+                </div>
+            </div>
+            <div class="flex-row">
+                <button class="btn-reset" id="resetBtn">⟲ Reset</button>
+                <span style="font-size:0.78rem; color:#7a9abb;" id="treeInfo">Nodes: 20</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="traversal-section">
+        <h3>📋 Inorder Traversal Sequence</h3>
+        <div class="traversal-scroll">
+            <div class="traversal-strip" id="traversalStrip"></div>
+        </div>
+    </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+    // ============================================================
+    // 1. GENERATE 20 DISTINCT BSTs (each with values 1..20)
+    // ============================================================
+    function insertBST(root, val) {
+        if (!root) return { val, left: null, right: null };
+        if (val < root.val) root.left = insertBST(root.left, val);
+        else root.right = insertBST(root.right, val);
+        return root;
+    }
+
+    function buildTreeFromPermutation(perm) {
+        let root = null;
+        for (const v of perm) root = insertBST(root, v);
+        return root;
+    }
+
+    function serialize(node) {
+        if (!node) return 'null';
+        return `${node.val},${serialize(node.left)},${serialize(node.right)}`;
+    }
+
+    function generateUniqueTrees(count, n = 20) {
+        const trees = [];
+        const seen = new Set();
+        let attempts = 0;
+        while (trees.length < count && attempts < 100000) {
+            attempts++;
+            const arr = Array.from({ length: n }, (_, i) => i + 1);
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            const tree = buildTreeFromPermutation(arr);
+            const key = serialize(tree);
+            if (!seen.has(key)) {
+                seen.add(key);
+                trees.push(tree);
+            }
+        }
+        return trees;
+    }
+
+    let exampleTrees = generateUniqueTrees(20);
+    while (exampleTrees.length < 20) exampleTrees.push(exampleTrees[0]);
+
+    // ============================================================
+    // 2. STATE
+    // ============================================================
+    let currentExampleIndex = 0;
+    let selectedVal = null;
+    let successorVal = null;
+    let pathHighlightNodes = [];
+
+    let nodeMap = new Map();
+    let inorderValues = [];
+    let idxMap = new Map();
+    let successorMap = new Map();
+
+    function rebuildMaps(tree) {
+        nodeMap.clear();
+        function buildMap(node, parent = null) {
+            if (!node) return;
+            nodeMap.set(node.val, { node, parent, left: node.left, right: node.right });
+            buildMap(node.left, node);
+            buildMap(node.right, node);
+        }
+        buildMap(tree);
+
+        inorderValues = [];
+        function inorder(node, arr = []) {
+            if (!node) return arr;
+            inorder(node.left, arr);
+            arr.push(node.val);
+            inorder(node.right, arr);
+            return arr;
+        }
+        inorder(tree, inorderValues);
+        idxMap.clear();
+        inorderValues.forEach((v, i) => idxMap.set(v, i));
+
+        successorMap.clear();
+        for (const v of nodeMap.keys()) {
+            const entry = nodeMap.get(v);
+            if (!entry) continue;
+            const { node, parent } = entry;
+            if (node.right) {
+                let cur = node.right;
+                while (cur.left) cur = cur.left;
+                successorMap.set(v, cur.val);
+            } else {
+                let cur = node;
+                let par = parent;
+                while (par && par.right === cur) {
+                    cur = par;
+                    par = nodeMap.get(par.val)?.parent || null;
+                }
+                successorMap.set(v, par ? par.val : null);
+            }
+        }
+    }
+
+    // ============================================================
+    // 3. CANVAS SETUP
+    // ============================================================
+    const canvas = document.getElementById('treeCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const NODE_RADIUS = 22;
+    const LEVEL_HEIGHT = 82;
+    const HORIZONTAL_PAD = 40;
+    const nodePositions = new Map();
+
+    function computeLayout() {
+        nodePositions.clear();
+        const levelMap = new Map();
+        function computeLevels(node, level = 0) {
+            if (!node) return;
+            levelMap.set(node.val, level);
+            computeLevels(node.left, level + 1);
+            computeLevels(node.right, level + 1);
+        }
+        const tree = exampleTrees[currentExampleIndex];
+        computeLevels(tree);
+        const totalNodes = inorderValues.length;
+        const usableWidth = W - HORIZONTAL_PAD * 2;
+        const spacing = usableWidth / (totalNodes + 1);
+        for (const [val, entry] of nodeMap) {
+            const idx = idxMap.get(val);
+            const level = levelMap.get(val);
+            const x = (idx + 1) * spacing + HORIZONTAL_PAD;
+            const y = level * LEVEL_HEIGHT + 60;
+            nodePositions.set(val, { x, y });
+        }
+    }
+
+    function drawTree() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Edges
+        for (const [val, entry] of nodeMap) {
+            const pos = nodePositions.get(val);
+            if (!pos) continue;
+            const left = entry.left, right = entry.right;
+            if (left) {
+                const lpos = nodePositions.get(left.val);
+                if (lpos) {
+                    ctx.beginPath();
+                    ctx.moveTo(pos.x, pos.y + NODE_RADIUS * 0.5);
+                    ctx.lineTo(lpos.x, lpos.y - NODE_RADIUS * 0.5);
+                    ctx.strokeStyle = '#b8c9dc';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+            if (right) {
+                const rpos = nodePositions.get(right.val);
+                if (rpos) {
+                    ctx.beginPath();
+                    ctx.moveTo(pos.x, pos.y + NODE_RADIUS * 0.5);
+                    ctx.lineTo(rpos.x, rpos.y - NODE_RADIUS * 0.5);
+                    ctx.strokeStyle = '#b8c9dc';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Nodes
+        for (const [val, pos] of nodePositions) {
+            const isSelected = (val === selectedVal);
+            const isSuccessor = (val === successorVal);
+            const isPath = pathHighlightNodes.includes(val) && !isSelected && !isSuccessor;
+
+            let bgColor = '#eef3f8';
+            let borderColor = '#b8c9dc';
+            let textColor = '#1e3a5f';
+
+            if (isSelected && isSuccessor) {
+                bgColor = '#2b7be4';
+                borderColor = '#1a5cb0';
+                textColor = '#fff';
+            } else if (isSelected) {
+                bgColor = '#2b7be4';
+                borderColor = '#1a5cb0';
+                textColor = '#fff';
+            } else if (isSuccessor) {
+                bgColor = '#f5a623';
+                borderColor = '#c47f10';
+                textColor = '#fff';
+            } else if (isPath) {
+                bgColor = '#d4edda';
+                borderColor = '#2d7a2d';
+                textColor = '#0b1a2e';
+            }
+
+            ctx.shadowColor = 'rgba(0,0,0,0.06)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetY = 2;
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, NODE_RADIUS, 0, Math.PI * 2);
+            ctx.fillStyle = bgColor;
+            ctx.fill();
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = (isSelected || isSuccessor || isPath) ? 3 : 1.5;
+            ctx.stroke();
+
+            if (isSelected && isSuccessor) {
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, NODE_RADIUS - 4, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            if (isPath) {
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, NODE_RADIUS + 4, 0, Math.PI * 2);
+                ctx.strokeStyle = '#2d7a2d';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            ctx.fillStyle = textColor;
+            ctx.font = 'bold 14px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(val, pos.x, pos.y + 1);
+
+            if (isSuccessor && !isSelected) {
+                ctx.fillStyle = '#c47f10';
+                ctx.font = '10px sans-serif';
+                ctx.fillText('⬅', pos.x + NODE_RADIUS + 14, pos.y - 2);
+            }
+        }
+    }
+
+    // ============================================================
+    // 4. RENDER TRAVERSAL
+    // ============================================================
+    function renderTraversal() {
+        const strip = document.getElementById('traversalStrip');
+        strip.innerHTML = '';
+        inorderValues.forEach((v) => {
+            const isSelected = (v === selectedVal);
+            const isSuccessor = (v === successorVal);
+            const isPath = pathHighlightNodes.includes(v) && !isSelected && !isSuccessor;
+            const span = document.createElement('span');
+            span.className = 'traversal-item';
+            if (isSelected && isSuccessor) span.classList.add('both');
+            else if (isSelected) span.classList.add('selected');
+            else if (isSuccessor) span.classList.add('successor');
+            else if (isPath) span.classList.add('path');
+            span.textContent = v;
+            span.addEventListener('click', () => selectNode(v));
+            strip.appendChild(span);
+            const arrow = document.createElement('span');
+            arrow.className = 'traversal-arrow';
+            arrow.textContent = '→';
+            strip.appendChild(arrow);
+        });
+        if (strip.lastChild) strip.removeChild(strip.lastChild);
+        if (selectedVal !== null) {
+            const items = strip.querySelectorAll('.traversal-item');
+            for (const el of items) {
+                if (parseInt(el.textContent) === selectedVal) {
+                    el.scrollIntoView({ block: 'nearest', inline: 'center' });
+                    break;
+                }
+            }
+        }
+    }
+
+    // ============================================================
+    // 5. PROOF GENERATION
+    // ============================================================
+    function generateProof(selected, successor) {
+        const proofContent = document.getElementById('proofContent');
+        if (selected === null) {
+            proofContent.innerHTML = `<div class="proof-step">Click a node to see the step‑by‑step proof.</div>`;
+            return;
+        }
+
+        const entry = nodeMap.get(selected);
+        if (!entry) {
+            proofContent.innerHTML = `<div class="proof-step">Node not found.</div>`;
+            return;
+        }
+
+        pathHighlightNodes = [];
+        let steps = [];
+
+        if (successor === null || successor === undefined) {
+            steps.push(`📌 <strong>Node ${selected}</strong> is the maximum value in this BST.`);
+            steps.push(`❌ It has <strong>no right subtree</strong>, and climbing up leads to the root without coming from the left.`);
+            steps.push(`✅ Conclusion: <strong>${selected}</strong> has <strong>no inorder successor</strong>.`);
+            proofContent.innerHTML = steps.map(s => `<div class="proof-step">${s}</div>`).join('');
+            return;
+        }
+
+        steps.push(`📌 <strong>Step 1:</strong> Identify the case for node <span class="node-tag">${selected}</span>.`);
+
+        if (entry.right) {
+            steps.push(`⚡ Node <strong>${selected}</strong> has a <strong>right subtree</strong>.`);
+            steps.push(`   ➜ According to <strong>Rule 1</strong>, the successor is the <strong>leftmost node</strong> in this right subtree.`);
+
+            let cur = entry.right;
+            let pathStr = `→ ${cur.val}`;
+            pathHighlightNodes.push(cur.val);
+            while (cur.left) {
+                cur = cur.left;
+                pathStr += ` → ${cur.val}`;
+                pathHighlightNodes.push(cur.val);
+            }
+            steps.push(`📍 <strong>Step 2:</strong> Traverse the right subtree: <span class="node-tag">${pathStr}</span>`);
+            steps.push(`✅ <strong>Conclusion:</strong> The leftmost node is <span class="node-tag">${successor}</span>.`);
+            steps.push(`   ➜ Therefore, <strong>${successor}</strong> is the inorder successor of <strong>${selected}</strong>.`);
+
+        } else {
+            steps.push(`⚡ Node <strong>${selected}</strong> does <strong>NOT</strong> have a right subtree.`);
+            steps.push(`   ➜ According to <strong>Rule 2</strong>, we must <strong>climb up</strong> the ancestors until we come from the left.`);
+
+            let cur = entry.node;
+            let par = entry.parent;
+            let climbPath = `${cur.val}`;
+            let found = false;
+
+            while (par && par.right === cur) {
+                steps.push(`↗️ Climbing up: <strong>${cur.val}</strong> is in the <strong>RIGHT</strong> subtree of <strong>${par.val}</strong>. Moving up...`);
+                cur = par;
+                climbPath += ` → ${cur.val}`;
+                pathHighlightNodes.push(cur.val);
+                par = nodeMap.get(par.val)?.parent || null;
+            }
+
+            if (par) {
+                steps.push(`📍 Found <strong>${par.val}</strong> because <strong>${cur.val}</strong> is in the <strong>LEFT</strong> subtree of <strong>${par.val}</strong>.`);
+                pathHighlightNodes.push(par.val);
+                steps.push(`✅ <strong>Conclusion:</strong> <span class="node-tag">${par.val}</span> is the inorder successor of <strong>${selected}</strong>.`);
+            } else {
+                steps.push(`❌ Reached the root without coming from the left. No successor exists.`);
+            }
+        }
+
+        proofContent.innerHTML = steps.map(s => `<div class="proof-step">${s}</div>`).join('');
+    }
+
+    // ============================================================
+    // 6. UPDATE UI
+    // ============================================================
+    function updateUI() {
+        const selectedDisplay = document.getElementById('selectedDisplay');
+        const selectedDesc = document.getElementById('selectedDesc');
+        const successorDisplay = document.getElementById('successorDisplay');
+        const successorDesc = document.getElementById('successorDesc');
+
+        if (selectedVal === null) {
+            selectedDisplay.textContent = '—';
+            selectedDesc.textContent = 'Click a node';
+            successorDisplay.innerHTML = '<span class="null-text">—</span>';
+            successorDesc.textContent = 'Select a node';
+            pathHighlightNodes = [];
+        } else {
+            selectedDisplay.textContent = selectedVal;
+            const entry = nodeMap.get(selectedVal);
+            const hasRight = entry && entry.right !== null;
+            const succ = successorMap.get(selectedVal);
+            selectedDesc.textContent = hasRight ?
+                'Has right subtree → leftmost in that subtree' :
+                'No right subtree → climb from left';
+
+            if (succ !== null && succ !== undefined) {
+                successorDisplay.textContent = succ;
+                successorDesc.textContent = `Node ${succ} is the next in inorder.`;
+                successorVal = succ;
+            } else {
+                successorDisplay.innerHTML = '<span class="null-text">∅ (none)</span>';
+                successorDesc.textContent = `Node ${selectedVal} is the last node.`;
+                successorVal = null;
+            }
+        }
+
+        generateProof(selectedVal, successorVal);
+        renderTraversal();
+        drawTree();
+
+        document.querySelectorAll('.example-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === currentExampleIndex);
+        });
+        document.getElementById('treeInfo').textContent = `Example ${currentExampleIndex+1} · Nodes: 20`;
+    }
+
+    // ============================================================
+    // 7. SELECTION & SWITCH
+    // ============================================================
+    function selectNode(val) {
+        selectedVal = val;
+        successorVal = successorMap.get(val) || null;
+        updateUI();
+    }
+
+    function switchExample(index) {
+        currentExampleIndex = index;
+        const tree = exampleTrees[index];
+        rebuildMaps(tree);
+        computeLayout();
+        selectedVal = null;
+        successorVal = null;
+        pathHighlightNodes = [];
+        updateUI();
+    }
+
+    function resetSelection() {
+        selectedVal = null;
+        successorVal = null;
+        pathHighlightNodes = [];
+        updateUI();
+    }
+
+    // ============================================================
+    // 8. CANVAS INTERACTION
+    // ============================================================
+    function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        if (clientX === undefined) return null;
+        return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+    }
+
+    function handleCanvasClick(e) {
+        const coords = getCanvasCoords(e);
+        if (!coords) return;
+        for (const [val, pos] of nodePositions) {
+            const dx = coords.x - pos.x, dy = coords.y - pos.y;
+            if (dx * dx + dy * dy < (NODE_RADIUS + 8) ** 2) {
+                selectNode(val);
+                return;
+            }
+        }
+    }
+    canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCanvasClick(e); }, { passive: false });
+
+    // ============================================================
+    // 9. TOOLTIP
+    // ============================================================
+    const tooltip = document.getElementById('tooltip');
+    canvas.addEventListener('mousemove', (e) => {
+        const coords = getCanvasCoords(e);
+        if (!coords) { tooltip.classList.remove('show'); return; }
+        let found = null;
+        for (const [val, pos] of nodePositions) {
+            const dx = coords.x - pos.x, dy = coords.y - pos.y;
+            if (dx * dx + dy * dy < (NODE_RADIUS + 6) ** 2) { found = val; break; }
+        }
+        if (found !== null) {
+            const succ = successorMap.get(found);
+            const succText = succ !== null && succ !== undefined ? ` → ${succ}` : ' (no successor)';
+            tooltip.textContent = `Node ${found}${succText}`;
+            tooltip.style.left = (e.clientX + 14) + 'px';
+            tooltip.style.top = (e.clientY - 10) + 'px';
+            tooltip.classList.add('show');
+        } else {
+            tooltip.classList.remove('show');
+        }
+    });
+    canvas.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+
+    // ============================================================
+    // 10. KEYBOARD
+    // ============================================================
+    document.addEventListener('keydown', (e) => {
+        if (selectedVal === null) {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                selectNode(inorderValues[0]);
+                e.preventDefault();
+            }
+            return;
+        }
+        const idx = idxMap.get(selectedVal);
+        if (idx === undefined) return;
+        if (e.key === 'ArrowRight' && idx < inorderValues.length - 1) {
+            selectNode(inorderValues[idx + 1]);
+            e.preventDefault();
+        } else if (e.key === 'ArrowLeft' && idx > 0) {
+            selectNode(inorderValues[idx - 1]);
+            e.preventDefault();
+        } else if (e.key === 'Escape') {
+            resetSelection();
+            e.preventDefault();
+        }
+    });
+
+    // ============================================================
+    // 11. BUTTONS
+    // ============================================================
+    const btnContainer = document.getElementById('exampleButtons');
+    for (let i = 0; i < 20; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'example-btn' + (i === 0 ? ' active' : '');
+        btn.textContent = i + 1;
+        btn.dataset.index = i;
+        btn.addEventListener('click', () => switchExample(i));
+        btnContainer.appendChild(btn);
+    }
+    document.getElementById('resetBtn').addEventListener('click', resetSelection);
+
+    // ============================================================
+    // 12. INIT
+    // ============================================================
+    switchExample(0);
+    setTimeout(() => selectNode(10), 150);
+</script>
+
+</body>
+</html>
